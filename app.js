@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 import { getDatabase, ref, set, onValue, remove, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-// ⚠️ ضع رموز Firebase الخاصة بك هنا
+// ضع أكواد Firebase الخاصة بك هنا
 const firebaseConfig = {
     apiKey: "AIzaSyBJ5H5z17_gJt_8Nop8RfxmmsRFX4SDbYI",
     authDomain: "sabaya-store.firebaseapp.com",
@@ -11,17 +11,15 @@ const firebaseConfig = {
     storageBucket: "sabaya-store.firebasestorage.app",
     messagingSenderId: "76152488551",
     appId: "1:76152488551:web:6cb3ff8ba85b25bc9b0ac2"
-    
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const auth = getAuth(app);
 
-// رقم واتساب صاحبة المتجر (ضع الرقم مع رمز الدولة بدون +)
-const WHATSAPP_NUMBER = "963991234567"; 
+// رقم واتساب صاحبة المتجر (عدله للرقم الجديد)
+const WHATSAPP_NUMBER = "963982398084"; 
 
-// تحميل الفئات
 function loadCategories() {
     onValue(ref(db, 'categories/'), (snapshot) => {
         const data = snapshot.val();
@@ -42,7 +40,6 @@ function loadCategories() {
     });
 }
 
-// تحميل الفساتين
 function loadDresses() {
     onValue(ref(db, 'dresses/'), (snapshot) => {
         const data = snapshot.val();
@@ -55,9 +52,13 @@ function loadDresses() {
         if (data) {
             Object.keys(data).forEach(key => {
                 const d = data[key];
+                // عرض صورتين بجانب بعضهما
                 gridHTML += `
                     <div class="card" data-cat="${d.category}">
-                        <img src="${d.image}" onclick="previewImage('${d.image}')">
+                        <div class="card-images">
+                            <img src="${d.image1}" onclick="previewImage('${d.image1}')">
+                            <img src="${d.image2}" onclick="previewImage('${d.image2}')">
+                        </div>
                         <div class="card-body">
                             <div class="card-title">${d.name}</div>
                             <div class="card-desc">${d.description}</div>
@@ -83,7 +84,6 @@ function loadDresses() {
     });
 }
 
-// إتاحة الدوال للاستخدام في HTML
 window.previewImage = function(src) {
     document.getElementById("previewSrc").src = src;
     document.getElementById("imgPreview").style.display = "flex";
@@ -112,7 +112,7 @@ window.deleteDress = function(id) {
     if(confirm("حذف الفستان؟")) remove(ref(db, 'dresses/' + id));
 }
 
-// ضغط الصورة قبل الحفظ
+// دالة ضغط الصور (تستخدم للصورتين)
 window.compressImage = function(file, callback) {
     const reader = new FileReader();
     reader.onload = e => {
@@ -137,21 +137,30 @@ window.addDress = function() {
     const cat = document.getElementById("dressCat").value;
     const price = document.getElementById("dressPrice").value;
     const desc = document.getElementById("dressDesc").value;
-    const imgFile = document.getElementById("dressImg").files[0];
+    
+    // جلب الصورتين
+    const imgFile1 = document.getElementById("dressImg1").files[0];
+    const imgFile2 = document.getElementById("dressImg2").files[0];
 
-    if(!name || !cat || !price || !imgFile) return alert("يرجى ملء جميع الحقول وإدراج صورة");
+    if(!name || !cat || !price || !imgFile1 || !imgFile2) return alert("يرجى ملء جميع الحقول وإدراج الصورتين");
 
-    compressImage(imgFile, (base64Image) => {
-        const newRef = push(ref(db, 'dresses/'));
-        set(newRef, {
-            name: name, category: cat, price: price,
-            description: desc, image: base64Image
-        }).then(() => {
-            alert("تم إضافة الفستان بنجاح!");
-            document.getElementById("dressName").value = "";
-            document.getElementById("dressPrice").value = "";
-            document.getElementById("dressDesc").value = "";
-            document.getElementById("dressImg").value = "";
+    // ضغط الصورة الأولى ثم الثانية ثم الحفظ
+    compressImage(imgFile1, (base64Image1) => {
+        compressImage(imgFile2, (base64Image2) => {
+            const newRef = push(ref(db, 'dresses/'));
+            set(newRef, {
+                name: name, category: cat, price: price,
+                description: desc, 
+                image1: base64Image1, 
+                image2: base64Image2
+            }).then(() => {
+                alert("تم إضافة الفستان بنجاح!");
+                document.getElementById("dressName").value = "";
+                document.getElementById("dressPrice").value = "";
+                document.getElementById("dressDesc").value = "";
+                document.getElementById("dressImg1").value = "";
+                document.getElementById("dressImg2").value = "";
+            });
         });
     });
 }
@@ -159,7 +168,9 @@ window.addDress = function() {
 window.adminLogin = function() {
     const pass = document.getElementById("adminPass").value;
     const email = "sabaya@store.com"; // الإيميل الذي ستنشئه في Firebase
-    if (pass === "sabaya2024") { // كلمة المرور
+    
+    // ⚠️ قمت بتغيير كلمة المرور هنا
+    if (pass === "ssaabbaayyaa2025") { // كلمة المرور الجديدة
         signInWithEmailAndPassword(auth, email, pass)
         .then(() => {
             closeModal('loginModal');
@@ -174,7 +185,6 @@ window.closeModal = function(id) {
     document.getElementById(id).style.display = "none";
 }
 
-// فتح لوحة التحكم بالضغط 6 مرات على اللوغو
 let clickCount = 0; let clickTimer;
 document.getElementById("logoBtn").addEventListener('click', () => {
     clickCount++;
@@ -186,6 +196,5 @@ document.getElementById("logoBtn").addEventListener('click', () => {
     clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
 });
 
-// بدء تحميل البيانات عند فتح الموقع
 loadCategories();
 loadDresses();
