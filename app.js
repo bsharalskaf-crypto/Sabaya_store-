@@ -56,8 +56,8 @@ function loadDresses() {
                 gridHTML += `
                     <div class="card" data-cat="${d.category}">
                         <div class="card-images">
-                            <img src="${d.image1}" onclick="previewImage('${d.image1}')">
-                            <img src="${d.image2}" onclick="previewImage('${d.image2}')">
+                          <img src="${d.image1}" onclick="previewImage('${d.image1}')" loading="lazy">
+<img src="${d.image2}" onclick="previewImage('${d.image2}')" loading="lazy">
                         </div>
                         <div class="card-body">
                             <div class="card-title">${d.name}</div>
