@@ -111,8 +111,7 @@ window.addCategory = function() {
 window.deleteDress = function(id) {
     if(confirm("حذف الفستان؟")) remove(ref(db, 'dresses/' + id));
 }
-
-// دالة ضغط الصور (تستخدم للصورتين)
+// 🌟 دالة الضغط السحري (تصغير الحجم إلى 40 كيلوبايت تقريباً)
 window.compressImage = function(file, callback) {
     const reader = new FileReader();
     reader.onload = e => {
@@ -120,18 +119,23 @@ window.compressImage = function(file, callback) {
         img.onload = () => {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
-            const MAX_W = 600;
+            
+            // تصغير أبعاد الصورة إلى 500 بكسل كحد أقصى للعرض
+            const MAX_W = 500;
             let w = img.width, h = img.height;
             if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
             canvas.width = w; canvas.height = h;
+            
+            // رسم الصورة بالأبعاد الجديدة
             ctx.drawImage(img, 0, 0, w, h);
-            callback(canvas.toDataURL('image/jpeg', 0.8));
+            
+            // تحويلها إلى Base64 بجودة 60% (ممتازة للموبايل وحجمها صغير جداً)
+            callback(canvas.toDataURL('image/jpeg', 0.6));
         };
         img.src = e.target.result;
     };
     reader.readAsDataURL(file);
 }
-
 window.addDress = function() {
     const name = document.getElementById("dressName").value;
     const cat = document.getElementById("dressCat").value;
