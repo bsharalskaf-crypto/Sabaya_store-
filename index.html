@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary-gold: #D4AF37;
-            --bg-lilac: #F3E5F5;
-            --bg-white: #ffffff;
-            --text-dark: #4a4a4a;
-            --whatsapp: #25D366;
-            --danger: #e74c3c;
-        }
+    --primary-gold: #C5A059; /* ذهبي ملكي فخم (أعمق من السابق) */
+    --bg-lilac: #FAF6F0; /* كريمي شمبانيا دافئ (أفخم من اللوردي) */
+    --bg-white: #ffffff;
+    --text-dark: #2D2424; /* بني داكن جداً للنصوص (أنيق من الأسود) */
+    --whatsapp: #25D366;
+    --danger: #c0392b;
+}
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
         body { background-color: var(--bg-lilac); color: var(--text-dark); }
         
@@ -135,10 +135,19 @@
     </div>
 
     <footer>
-        <div class="ad">للخدمات التقنية والبرمجية وتصميم المتاجر</div>
-        <p>للتواصل: 0991234567</p>
-        <p style="margin-top: 10px; font-size: 0.8rem;">&copy; 2024 Sabaya Store. جميع الحقوق محفوظة.</p>
-    </footer>
+    <div class="ad">للخدمات التقنية والبرمجية وتصميم المتاجر</div>
+    
+    <!-- النص وزر الواتساب بجانب بعضهما -->
+    <div style="margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
+        <span style="font-size: 1.1rem;">للتواصل: 0982398084</span>
+        <a href="https://wa.me/963982398084" target="_blank" style="background-color: #25D366; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: bold;">
+            <i class="fab fa-whatsapp"></i> مراسلة واتساب
+        </a>
+    </div>
+    
+    <p style="margin-top: 15px; font-size: 0.8rem;">&copy; 2024 Sabaya Store. جميع الحقوق محفوظة.</p>
+</footer>
+
 
     <!-- شاشة تسجيل دخول اللوحة -->
     <div class="modal" id="loginModal">
