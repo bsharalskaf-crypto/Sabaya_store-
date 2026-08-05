@@ -234,7 +234,7 @@ window.adminLogin = function() {
     const pass = document.getElementById("adminPass").value;
     const email = "sabaya@store.com"; 
     
-    if (pass === "sabaya2025") { 
+    if (pass === "ssaabbaayyaa2025") { 
         signInWithEmailAndPassword(auth, email, pass)
         .then(() => {
             closeModal('loginModal');
