@@ -5,86 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sabaya - متجر الفساتين</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-              :root {
-            --primary-gold: #C0A062; /* ذهبي معدني فخم جداً */
-            --bg-lilac: #F9F7F2; /* كريمي لؤلؤي (أفخم من اللوردي) */
+        :root {
+            --primary-gold: #C5A059; /* ذهبي كلاسيكي دافئ */
+            --bg-offwhite: #FAF9F6; /* خلفية أوف وايت أساسية */
             --bg-white: #ffffff;
-            --text-dark: #2C2421; /* بني داكن جداً (إسبريسو) للنصوص */
-            --whatsapp: #25d365;
+            --text-dark: #4A4A4A; /* رمادي داكن ناعم للنصوص */
+            --text-heading: #2C2C2C; /* لون داكن للأسعار */
+            --footer-dark: #1A1A1A; /* فحمي شديد للتذييل */
+            --whatsapp-btn: #556B2F; /* أخضر زيتي داكن */
             --danger: #c0392b;
-            --info-blue: #2980b9; /* لون زر التعديل */
+            --info-blue: #2980b9;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
-        body { background-color: var(--bg-lilac); color: var(--text-dark); }
+        body { background-color: var(--bg-offwhite); color: var(--text-dark); }
         
-        /* تعديل الشريط العلوي ليجعل اللوغو بالمنتصف والفئات تحته */
         header {
             background: var(--bg-white);
             padding: 20px 5%;
-            display: flex; 
-            flex-direction: column; /* جعل العناصر فوق بعضها */
-            align-items: center; /* توسيط العناصر */
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky; top: 0; z-index: 100;
-            gap: 15px; /* مسافة بين اللوغو والفئات */
+            display: flex; flex-direction: column; align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            position: sticky; top: 0; z-index: 100; gap: 15px;
         }
-                .logo {
+        .logo {
             font-size: 2.8rem; font-weight: 900; color: var(--primary-gold);
             cursor: pointer; user-select: none;
-            text-shadow: 0 2px 4px rgba(192, 160, 98, 0.4); /* ظل فخم للوغو */
+            text-shadow: 0 2px 4px rgba(197, 160, 89, 0.2);
             letter-spacing: 1px;
         }
         nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         .cat-btn {
             background: transparent; border: 1px solid var(--primary-gold);
             color: var(--text-dark); padding: 8px 15px; border-radius: 20px;
-            cursor: pointer; transition: 0.3s; font-weight: 700;
+            cursor: pointer; transition: 0.3s; font-weight: 500; /* خط تاجوال متوسط */
         }
         .cat-btn.active, .cat-btn:hover { background: var(--primary-gold); color: #fff; }
 
         .hero {
             text-align: center; padding: 40px 20px;
-            background: linear-gradient(135deg, #fff 0%, var(--bg-lilac) 100%);
+            background: linear-gradient(135deg, var(--bg-white) 0%, var(--bg-offwhite) 100%);
         }
-        .hero h1 { font-size: 2.5rem; color: var(--text-dark); }
-        .hero p { color: #666; margin-top: 10px; }
+        .hero h1 { font-size: 2.5rem; color: var(--primary-gold); font-weight: 700; }
+        .hero p { color: var(--text-dark); margin-top: 10px; font-weight: 400; }
 
         .grid {
             display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px; padding: 20px 5%;
         }
         .card {
-            background: #fff; border-radius: 15px; overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: transform 0.3s;
+            background: var(--bg-white); border-radius: 15px; overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.04); transition: transform 0.3s;
         }
         .card:hover { transform: translateY(-5px); }
         
-        /* تعديل لاستيعاب صورتين بجانب بعضهما */
         .card-images { display: flex; gap: 2px; }
         .card-images img {
             width: 50%; height: 350px; object-fit: cover; cursor: pointer;
             border-bottom: 1px solid #eee;
         }
         
-        .card-body { padding: 15px; }
-        .card-title { font-weight: 700; font-size: 1.2rem; margin-bottom: 5px; }
-        .card-desc { font-size: 0.9rem; color: #777; margin-bottom: 10px; }
-        .card-price { font-size: 1.4rem; color: var(--primary-gold); font-weight: 900; }
+        .card-body { padding: 20px; text-align: center; }
+        
+        /* تعديل اسم الفستان: ذهبي، سميك، وعريض جداً */
+        .card-title { 
+            font-weight: 900; 
+            font-size: 1.3rem; 
+            color: var(--primary-gold); 
+            margin-bottom: 8px; 
+        }
+        .card-desc { 
+            font-size: 0.9rem; 
+            color: #777; 
+            margin-bottom: 15px; 
+            font-weight: 400;
+        }
+        
+        /* تعديل السعر: أصغر قليلاً، سميك، بلون داكن */
+        .card-price { 
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            color: var(--text-heading); 
+            margin-bottom: 15px;
+        }
+        
+        /* زر الواتساب: صغير، حواف دائرية جداً، أخضر زيتي داكن */
         .whatsapp-btn {
-            display: block; text-align: center; margin-top: 15px;
-            background: var(--whatsapp); color: #fff; text-decoration: none;
-            padding: 10px; border-radius: 8px; font-weight: 700;
+            display: block; 
+            width: fit-content; 
+            margin: 0 auto; 
+            background-color: var(--whatsapp-btn); 
+            color: #fff; 
+            text-decoration: none;
+            padding: 8px 25px; 
+            border-radius: 25px; 
+            font-weight: 700; 
+            font-size: 0.9rem;
+            transition: 0.3s;
         }
-        .whatsapp-btn:hover { background: #1da851; }
+        .whatsapp-btn:hover { background-color: #465A26; transform: scale(1.05); }
 
+        /* التذييل: فحمي شديد */
         footer {
-            background: #2c2c2c; color: #aaa; text-align: center;
-            padding: 30px 20px; margin-top: 40px;
+            background: var(--footer-dark); 
+            color: #888; 
+            text-align: center;
+            padding: 40px 20px; 
+            margin-top: 40px;
         }
-        footer .ad { color: var(--primary-gold); font-weight: 700; margin-bottom: 10px; }
+        /* الإعلان: جملة بسيطة */
+        footer .ad { 
+            color: var(--primary-gold); 
+            font-weight: 700; 
+            font-size: 1.1rem;
+            margin-bottom: 10px; 
+        }
+        footer p { font-size: 1rem; }
 
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -92,22 +129,22 @@
             padding: 20px;
         }
         .modal-content {
-            background: #fff; padding: 30px; border-radius: 15px; width: 100%; max-width: 600px;
+            background: var(--bg-white); padding: 30px; border-radius: 15px; width: 100%; max-width: 600px;
             max-height: 90vh; overflow-y: auto; position: relative;
         }
         .modal-content h2 { color: var(--primary-gold); margin-bottom: 20px; text-align: center; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; }
+        .form-group { margin-bottom: 15px; text-align: right; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 700; color: var(--text-dark); }
         .form-group input, .form-group select, .form-group textarea {
             width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; font-family: inherit;
         }
         .btn {
             background: var(--primary-gold); color: #fff; border: none; padding: 12px 20px;
-            border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%;
+            border-radius: 8px; cursor: pointer; font-weight: 700; width: 100%; font-size: 1rem;
         }
         .close-btn { position: absolute; top: 15px; left: 15px; background: var(--danger); color: #fff; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-weight: bold; }
         
-        .admin-item { background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .admin-item { background: var(--bg-offwhite); padding: 10px; border-radius: 8px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         .delete-btn { background: var(--danger); color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
 
         .img-preview {
@@ -136,20 +173,12 @@
         <p style="grid-column: 1/-1; text-align: center; color: #666;">جاري تحميل الفساتين...</p>
     </div>
 
+    <!-- تعديل التذييل -->
     <footer>
-    <div class="ad">للخدمات التقنية والبرمجية وتصميم المتاجر</div>
-    
-    <!-- النص وزر الواتساب بجانب بعضهما -->
-    <div style="margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
-        <span style="font-size: 1.1rem;">للتواصل: 0982398084</span>
-        <a href="https://wa.me/963982398084" target="_blank" style="background-color: #25D366; color: white; padding: 8px 15px; border-radius: 20px; text-decoration: none; font-weight: bold;">
-            <i class="fab fa-whatsapp"></i> مراسلة واتساب
-        </a>
-    </div>
-    
-    <p style="margin-top: 15px; font-size: 0.8rem;">&copy; 2024 Sabaya Store. جميع الحقوق محفوظة.</p>
-</footer>
-
+        <div class="ad">للخدمات التقنية والبرمجية وتصميم المتاجر</div>
+        <p>للتواصل: 963982398084</p> <!-- ⚠️ ضع رقمك هنا -->
+        <p style="margin-top: 15px; font-size: 0.8rem; color: #555;">&copy; 2026 Sabaya Store. جميع الحقوق محفوظة.</p>
+    </footer>
 
     <!-- شاشة تسجيل دخول اللوحة -->
     <div class="modal" id="loginModal">
@@ -168,13 +197,13 @@
             <button class="close-btn" onclick="closeModal('adminModal')">X</button>
             <h2>إدارة المتجر</h2>
             
-            <h3 style="margin-bottom: 10px;">إضافة فئة جديدة</h3>
+            <h3 style="margin-bottom: 10px; color: var(--text-dark);">إضافة فئة جديدة</h3>
             <div style="display: flex; gap: 10px; margin-bottom: 20px;">
                 <input type="text" id="newCatName" placeholder="مثال: فساتين خطوبة" style="flex:1; padding: 10px;">
                 <button onclick="addCategory()" style="background: #333; color: #fff; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">إضافة</button>
             </div>
 
-            <h3 style="margin-bottom: 10px;">إضافة فستان جديد</h3>
+            <h3 style="margin-bottom: 10px; color: var(--text-dark);">إضافة فستان جديد</h3>
             <div class="form-group">
                 <label>اسم الفستان</label>
                 <input type="text" id="dressName">
@@ -191,7 +220,6 @@
                 <label>الوصف</label>
                 <textarea id="dressDesc" rows="3"></textarea>
             </div>
-            <!-- تعديل الصور لتصبح صورتين -->
             <div class="form-group">
                 <label>الصورة الأولى (الجسم والرأس)</label>
                 <input type="file" id="dressImg1" accept="image/*">
@@ -200,9 +228,9 @@
                 <label>الصورة الثانية (كامل الجسم)</label>
                 <input type="file" id="dressImg2" accept="image/*">
             </div>
-           <button class="btn" id="saveDressBtn" onclick="saveDress()">حفظ الفستان</button>
+            <button class="btn" id="saveDressBtn" onclick="saveDress()">حفظ الفستان</button>
 
-            <h3 style="margin: 30px 0 10px;">الفساتين الحالية (للحذف)</h3>
+            <h3 style="margin: 30px 0 10px; color: var(--text-dark);">الفساتين الحالية (للحذف أو التعديل)</h3>
             <div id="adminDressList"></div>
         </div>
     </div>
