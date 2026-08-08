@@ -1,264 +1,173 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, set, onValue, remove, push, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-// ⚠️ ضع أكواد Firebase الخاصة بك هنا
-
+// إعدادات Firebase (ضعي أكوادك هنا لاحقاً عند إنشاء مشروع جديد للزبونة)
 const firebaseConfig = {
-  apiKey: "AIzaSyBJ5H5z17_gJt_8Nop8RfxmmsRFX4SDbYI",
-  authDomain: "sabaya-store.firebaseapp.com",
-  databaseURL: "https://sabaya-store-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "sabaya-store",
-  storageBucket: "sabaya-store.firebasestorage.app",
-  messagingSenderId: "76152488551",
-  appId: "1:76152488551:web:6cb3ff8ba85b25bc9b0ac2",
-  measurementId: "G-HLX5JNW11F"
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_PROJECT_ID.appspot.com",
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const auth = getAuth(app);
 
-const WHATSAPP_NUMBER = "963991234567"; 
-let currentEditId = null; // متغير لمعرفة هل نحن في وضع تعديل أم إضافة
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-function loadCategories() {
-    onValue(ref(db, 'categories/'), (snapshot) => {
-        const data = snapshot.val();
-        const nav = document.getElementById("categoriesNav");
-        const adminSelect = document.getElementById("dressCat");
-        
-        let navHTML = `<button class="cat-btn active" onclick="filterCategory('all', event)">الكل</button>`;
-        let selectHTML = "";
-        
-        if (data) {
-            Object.keys(data).forEach(key => {
-                navHTML += `<button class="cat-btn" onclick="filterCategory('${key}', event)">${data[key].name}</button>`;
-                selectHTML += `<option value="${key}">${data[key].name}</option>`;
-            });
-        }
-        nav.innerHTML = navHTML;
-        adminSelect.innerHTML = selectHTML || `<option value="">لا توجد فئات</option>`;
-    });
-}
+const WHATSAPP_NUMBER = "963944123456"; // رقم الواتساب
+const ADMIN_PASSWORD = "123456"; // كلمة المرور
 
-function loadDresses() {
-    onValue(ref(db, 'dresses/'), (snapshot) => {
-        const data = snapshot.val();
-        const grid = document.getElementById("dressesGrid");
-        const adminList = document.getElementById("adminDressList");
-        
-        let gridHTML = "";
-        let adminHTML = "";
+let clickCount = 0;
+let clickTimer = null;
+const logo = document.getElementById('logo');
 
-        if (data) {
-            Object.keys(data).forEach(key => {
-                const d = data[key];
-                gridHTML += `
-                    <div class="card" data-cat="${d.category}">
-                        <div class="card-images">
-                            <img src="${d.image1}" onclick="previewImage('${d.image1}')" loading="lazy">
-                            <img src="${d.image2}" onclick="previewImage('${d.image2}')" loading="lazy">
-                        </div>
-                        <div class="card-body">
-                            <div class="card-title">${d.name}</div>
-                            <div class="card-desc">${d.description}</div>
-                            <div class="card-price">${d.price} ل.س</div>
-                            <a href="https://wa.me/${WHATSAPP_NUMBER}?text=استفسار عن الفستان: ${d.name}" target="_blank" class="whatsapp-btn">
-                                <i class="fab fa-whatsapp"></i> اطلب عبر واتساب
-                            </a>
-                        </div>
-                    </div>
-                `;
-                // في لوحة التحكم: أضفنا زر تعديل بجانب زر الحذف
-                adminHTML += `
-                    <div class="admin-item">
-                        <span>${d.name} - ${d.price} ل.س</span>
-                        <div style="display: flex; gap: 5px;">
-                            <button class="edit-btn-admin" style="background: #2980b9; color: #fff; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer;" onclick="editDress('${key}')"><i class="fas fa-edit"></i> تعديل</button>
-                            <button class="delete-btn" onclick="deleteDress('${key}')">حذف</button>
-                        </div>
-                    </div>
-                `;
-            });
-        } else {
-            gridHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666;">لا توجد فساتين حالياً.</p>`;
-        }
-        grid.innerHTML = gridHTML;
-        adminList.innerHTML = adminHTML;
-    });
-}
-
-window.previewImage = function(src) {
-    document.getElementById("previewSrc").src = src;
-    document.getElementById("imgPreview").style.display = "flex";
-}
-
-window.filterCategory = function(cat, e) {
-    const buttons = document.querySelectorAll('.cat-btn');
-    buttons.forEach(b => b.classList.remove('active'));
-    e.target.classList.add('active');
-
-    const cards = document.querySelectorAll('#dressesGrid .card');
-    cards.forEach(c => {
-        c.style.display = (cat === 'all' || c.dataset.cat === cat) ? "block" : "none";
-    });
-}
-
-window.addCategory = function() {
-    const name = document.getElementById("newCatName").value;
-    if(!name) return alert("أدخل اسم الفئة");
-    const newRef = push(ref(db, 'categories/'));
-    set(newRef, { name: name });
-    document.getElementById("newCatName").value = "";
-}
-
-window.deleteDress = function(id) {
-    if(confirm("حذف الفستان؟")) remove(ref(db, 'dresses/' + id));
-}
-
-// 🌟 دالة الضغط السحري
-window.compressImage = function(file, callback) {
-    const reader = new FileReader();
-    reader.onload = e => {
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-            const MAX_W = 500;
-            let w = img.width, h = img.height;
-            if (w > MAX_W) { h *= MAX_W / w; w = MAX_W; }
-            canvas.width = w; canvas.height = h;
-            ctx.drawImage(img, 0, 0, w, h);
-            callback(canvas.toDataURL('image/jpeg', 0.6));
-        };
-        img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-}
-
-// دالة تعديل الفستان (تستدعي البيانات وتضعها في الخانات)
-window.editDress = async function(id) {
-    currentEditId = id;
-    const snapshot = await get(ref(db, 'dresses/' + id));
-    const d = snapshot.val();
-    
-    if (d) {
-        document.getElementById("dressName").value = d.name;
-        document.getElementById("dressCat").value = d.category;
-        document.getElementById("dressPrice").value = d.price;
-        document.getElementById("dressDesc").value = d.description;
-        
-        // تغيير نص الزر ليدل على وضع التعديل
-        document.getElementById("saveDressBtn").innerText = "تحديث الفستان";
-        document.getElementById("saveDressBtn").style.background = "#2980b9"; // لون أزرق للتعديل
-        
-        // تمرير النافذة للأعلى لرؤية الخانات
-        document.querySelector('#adminModal .modal-content').scrollTo({ top: 0, behavior: 'smooth' });
-        
-        alert("تم استدعاء بيانات الفستان. عدل ما تريد واضغط (تحديث الفستان). إذا لا تريد تغيير الصورة، اترك حقل الصورة فارغاً.");
-    }
-}
-
-// دالة الحفظ (تعمل للإضافة الجديدة وللتعديل)
-window.saveDress = async function() {
-    const name = document.getElementById("dressName").value;
-    const cat = document.getElementById("dressCat").value;
-    const price = document.getElementById("dressPrice").value;
-    const desc = document.getElementById("dressDesc").value;
-    
-    const imgFile1 = document.getElementById("dressImg1").files[0];
-    const imgFile2 = document.getElementById("dressImg2").files[0];
-
-    if(!name || !cat || !price) return alert("يرجى ملء الاسم والفئة والسعر");
-
-    alert("جاري معالجة البيانات والصور، قد يستغرق هذا بضع ثوانٍ...");
-
-    try {
-        let imgUrl1, imgUrl2;
-
-        // إذا كنا في وضع تعديل، نجلب الصور القديمة أولاً
-        if (currentEditId) {
-            const snap = await get(ref(db, 'dresses/' + currentEditId));
-            const oldData = snap.val();
-            imgUrl1 = oldData.image1;
-            imgUrl2 = oldData.image2;
-        }
-
-        // إذا اختار المستخدم صورة جديدة، نضغطها ونحفظها مكان القديمة
-        if (imgFile1) {
-            imgUrl1 = await new Promise(res => compressImage(imgFile1, res));
-        }
-        if (imgFile2) {
-            imgUrl2 = await new Promise(res => compressImage(imgFile2, res));
-        }
-
-        // إذا كان فستاناً جديداً، يجب أن نتأكد من إدخال الصورتين
-        if (!currentEditId && (!imgFile1 || !imgFile2)) {
-            return alert("يرجى إدراج الصورتين للفستان الجديد");
-        }
-
-        const dressData = {
-            name: name, category: cat, price: price,
-            description: desc, 
-            image1: imgUrl1, 
-            image2: imgUrl2
-        };
-
-        if (currentEditId) {
-            // وضع التعديل: نحدث البيانات القديمة
-            await update(ref(db, 'dresses/' + currentEditId), dressData);
-            alert("تم تحديث الفستان بنجاح!");
-            currentEditId = null; // العودة لوضع الإضافة
-            document.getElementById("saveDressBtn").innerText = "حفظ الفستان";
-            document.getElementById("saveDressBtn").style.background = "var(--primary-gold)";
-        } else {
-            // وضع الإضافة: نضيف فستاناً جديداً
-            const newRef = push(ref(db, 'dresses/'));
-            await set(newRef, dressData);
-            alert("تم إضافة الفستان بنجاح!");
-        }
-
-        // تفريغ الخانات
-        document.getElementById("dressName").value = "";
-        document.getElementById("dressPrice").value = "";
-        document.getElementById("dressDesc").value = "";
-        document.getElementById("dressImg1").value = "";
-        document.getElementById("dressImg2").value = "";
-
-    } catch (error) {
-        alert("حدث خطأ: " + error.message);
-    }
-}
-
-window.adminLogin = function() {
-    const pass = document.getElementById("adminPass").value;
-    const email = "sabaya@store.com"; 
-    
-    if (pass === "ssaabbaayyaa2025") { 
-        signInWithEmailAndPassword(auth, email, pass)
-        .then(() => {
-            closeModal('loginModal');
-            document.getElementById("adminModal").style.display = "flex";
-        }).catch(err => alert("خطأ في الاتصال: " + err.message));
-    } else {
-        alert("كلمة المرور غير صحيحة!");
-    }
-}
-
-window.closeModal = function(id) {
-    document.getElementById(id).style.display = "none";
-}
-
-let clickCount = 0; let clickTimer;
-document.getElementById("logoBtn").addEventListener('click', () => {
+logo.addEventListener('click', () => {
     clickCount++;
     clearTimeout(clickTimer);
-    if(clickCount === 6) {
-        document.getElementById("loginModal").style.display = "flex";
+    if (clickCount === 5) {
+        document.getElementById('admin-panel').style.display = 'block';
         clickCount = 0;
+    } else {
+        clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
     }
-    clickTimer = setTimeout(() => { clickCount = 0; }, 2000);
 });
 
-loadCategories();
-loadDresses();
+function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
+
+function login() {
+    const pass = document.getElementById('admin-password').value;
+    if (pass === ADMIN_PASSWORD) {
+        document.getElementById('login-section').style.display = 'none';
+        document.getElementById('control-section').style.display = 'block';
+        loadAdminProducts();
+    } else { alert("كلمة المرور خاطئة!"); }
+}
+
+// متغير لتخزين الفئة الحالية المختارة
+let currentCategory = 'all';
+
+function filterCategory(category) {
+    currentCategory = category;
+    // تحديث الأزرار
+    const buttons = document.getElementsByClassName('category-btn');
+    for(let btn of buttons) {
+        btn.classList.remove('active');
+        if(btn.innerText === 'الكل' && category === 'all') btn.classList.add('active');
+        else if(btn.innerText.includes(category) && category !== 'all') btn.classList.add('active');
+    }
+}
+
+// إضافة منتج (مع الفئة)
+function addProduct() {
+    const name = document.getElementById('new-name').value;
+    const price = document.getElementById('new-price').value;
+    const category = document.getElementById('new-category').value; // أخذ الفئة المختارة
+    const img = document.getElementById('new-img').value;
+    
+    if(name && price && img) {
+        db.collection("products").add({
+            name: name,
+            price: price,
+            img: img,
+            category: category // حفظ الفئة في قاعدة البيانات
+        }).then(() => {
+            alert("تمت الإضافة بنجاح!");
+            document.getElementById('new-name').value = '';
+            document.getElementById('new-price').value = '';
+            document.getElementById('new-img').value = '';
+            loadAdminProducts(); 
+        }).catch((error) => {
+            alert("حدث خطأ: " + error.message);
+        });
+    } else {
+        alert("الرجاء ملء جميع الحقول");
+    }
+}
+
+// عرض المنتجات مع الفلترة
+const productsContainer = document.getElementById('products-container');
+db.collection("products").onSnapshot((snapshot) => {
+    productsContainer.innerHTML = ''; 
+    snapshot.forEach((doc) => {
+        const product = doc.data();
+        const productId = doc.id;
+        
+        // فلترة المنتجات حسب الفئة المختارة
+        if(currentCategory !== 'all' && product.category !== currentCategory) return;
+
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        const msg = `مرحباً، أرغب بالاستفسار عن: ${product.name} - السعر: ${product.price} ل.س`;
+        const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+        card.innerHTML = `
+            <img src="${product.img}" alt="${product.name}" onclick="openLightbox('${product.img}')">
+            <div class="product-info">
+                <h3>${product.name}</h3>
+                <p class="price">${product.price} ل.س</p>
+                <a href="${waLink}" target="_blank" class="whatsapp-btn">تواصل عبر واتساب 📱</a>
+            </div>`;
+        productsContainer.appendChild(card);
+    });
+});
+
+// لوحة التحكم
+function loadAdminProducts() {
+    const adminList = document.getElementById('admin-products-list');
+    adminList.innerHTML = '';
+    db.collection("products").get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+            const product = doc.data();
+            const productId = doc.id;
+            adminList.innerHTML += `
+                <div class="admin-item">
+                    <img src="${product.img}" alt="img">
+                    <input type="text" value="${product.name}" id="name-${productId}" style="width: 150px;">
+                    <input type="text" value="${product.price}" id="price-${productId}" style="width: 100px;">
+                    <select id="category-${productId}" style="width: 120px;">
+                        <option value="محجبات" ${product.category === 'محجبات' ? 'selected' : ''}>محجبات</option>
+                        <option value="سهرة" ${product.category === 'سهرة' ? 'selected' : ''}>سهرة</option>
+                        <option value="أعراس" ${product.category === 'أعراس' ? 'selected' : ''}>أعراس</option>
+                    </select>
+                    <button onclick="updateProduct('${productId}')">حفظ</button>
+                    <button onclick="deleteProduct('${productId}')" style="background: red;">حذف</button>
+                </div>`;
+        });
+    });
+}
+
+function updateProduct(id) {
+    const newName = document.getElementById(`name-${id}`).value;
+    const newPrice = document.getElementById(`price-${id}`).value;
+    const newCategory = document.getElementById(`category-${id}`).value;
+    const newImg = document.getElementById(`img-${id}`).value;
+    db.collection("products").doc(id).update({
+        name: newName, price: newPrice, category: newCategory, img: newImg
+    }).then(() => { alert("تم تحديث المنتج! (سيظهر للزبائن فوراً)"); });
+}
+
+function deleteProduct(id) {
+    if(confirm("هل أنت متأكد من الحذف؟")) {
+        db.collection("products").doc(id).delete().then(() => {
+            alert("تم حذف المنتج.");
+            loadAdminProducts();
+        });
+    }
+}
+
+// دوال معاينة الصورة
+let currentZoom = 1;
+function openLightbox(imgUrl) {
+    document.getElementById('lightbox-img').src = imgUrl;
+    document.getElementById('lightbox-modal').style.display = 'block';
+    currentZoom = 1;
+    document.getElementById('lightbox-img').style.transform = 'scale(1)';
+}
+function closeLightbox(event) {
+    if (event.target.id === 'lightbox-modal' || event.target.id === 'lightbox-close') {
+        document.getElementById('lightbox-modal').style.display = 'none';
+    }
+}
+function zoomImage(step, event) {
+    event.stopPropagation();
+    currentZoom += step;
+    if (currentZoom < 0.5) currentZoom = 0.5;
+    if (currentZoom > 3) currentZoom = 3;
+    document.getElementById('lightbox-img').style.transform = `scale(${currentZoom})`;
+}

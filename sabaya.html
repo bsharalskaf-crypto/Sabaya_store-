@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوتيك الأناقة</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #FF6B6B;
+            --secondary-color: #FFE66D;
+            --bg-color: #FFF5F5;
+            --text-color: #2D3436;
+        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); margin: 0; padding: 0; color: var(--text-color); min-height: 100vh; display: flex; flex-direction: column; }
+        header { background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); padding: 20px; text-align: center; color: white; }
+        #logo { cursor: pointer; font-size: 32px; font-weight: bold; user-select: none; font-family: 'Cairo', sans-serif; }
+        
+        .hero-section {
+            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 0 0 25px 25px;
+            color: #2D3436;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .hero-section h2 { font-size: 28px; margin: 0 0 10px 0; font-family: 'Cairo', sans-serif; }
+        .hero-section p { font-size: 18px; margin: 0; color: #555; }
+
+        /* شريط الفئات */
+        .category-bar {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 0 20px 20px 20px;
+        }
+        .category-btn {
+            padding: 10px 25px;
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            background: white;
+            color: var(--primary-color);
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .category-btn:hover, .category-btn.active {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; padding: 20px; flex: 1; }
+        .product-card { background: white; border: 2px solid #D4AF37; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); overflow: hidden; text-align: center; transition: transform 0.3s; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(212, 175, 55, 0.4); }
+        .product-card img { width: 100%; height: 300px; object-fit: cover; cursor: zoom-in; }
+        .product-info { padding: 15px; }
+        .price { color: var(--primary-color); font-weight: bold; font-size: 20px; }
+        .whatsapp-btn { display: block; background: #25D366; color: white; text-decoration: none; padding: 10px; margin-top: 10px; border-radius: 8px; font-weight: bold; }
+        
+        #admin-panel { display: none; position: fixed; top: 5%; left: 5%; right: 5%; background: white; padding: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.3); z-index: 100; border-radius: 15px; overflow-y: auto; max-height: 90%; }
+        #login-section { text-align: center; }
+        input, select, button { padding: 10px; margin: 5px; border-radius: 8px; border: 1px solid #ccc; width: 90%; max-width: 400px; }
+        button { background: var(--primary-color); color: white; border: none; cursor: pointer; width: auto; }
+        .admin-item { border-bottom: 1px solid #ccc; padding: 15px 0; display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+        .admin-item img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; }
+
+        #lightbox-modal { display: none; position: fixed; z-index: 1000; padding-top: 50px; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.9); }
+        #lightbox-img { margin: auto; display: block; max-width: 90%; max-height: 80%; border-radius: 10px; box-shadow: 0 0 20px rgba(255,255,255,0.2); transition: transform 0.3s ease; }
+        #zoom-controls { position: fixed; bottom: 30px; left: 0; right: 0; display: flex; justify-content: center; gap: 20px; z-index: 1001; }
+        #zoom-controls button { font-size: 24px; font-weight: bold; cursor: pointer; background: #FF6B6B; color: white; border: none; border-radius: 50%; width: 55px; height: 55px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        #lightbox-close { position: absolute; top: 20px; right: 35px; color: #fff; font-size: 40px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        #lightbox-close:hover { color: #FF6B6B; }
+
+        footer { background: #2D3436; color: white; text-align: center; padding: 40px 20px; margin-top: 50px; border-radius: 25px 25px 0 0; }
+        footer h3 { font-family: 'Cairo', sans-serif; margin: 0 0 10px 0; color: var(--secondary-color); }
+        footer p { margin: 5px 0; font-size: 15px; color: #ccc; }
+        .tech-services { margin-top: 20px; padding-top: 20px; border-top: 1px solid #555; font-size: 14px; }
+        .tech-services a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div id="logo">✨ بوتيك الأناقة ✨</div>
+    </header>
+
+    <div class="hero-section">
+        <h2>أهلاً بكِ في عالم الأناقة ✨</h2>
+        <p>اكتشفي أحدث تشكيلات الفساتين العصرية.. تصميمات تليق بذوقكِ الرفيع</p>
+    </div>
+
+    <!-- شريط الفئات -->
+    <div class="category-bar" id="category-bar">
+        <button class="category-btn active" onclick="filterCategory('all')">الكل</button>
+        <button class="category-btn" onclick="filterCategory('محجبات')">فساتين محجبات</button>
+        <button class="category-btn" onclick="filterCategory('سهرة')">فساتين سهرة</button>
+        <button class="category-btn" onclick="filterCategory('أعراس')">فساتين أعراس</button>
+    </div>
+
+    <div class="products-grid" id="products-container"></div>
+
+    <footer>
+        <h3>✨ بوتيك الأناقة ✨</h3>
+        <p>وجهتكِ الأولى للأزياء النسائية الراقية</p>
+        <div class="tech-services">
+            <p>للخدمات التقنية وتصميم المواقع الإلكترونية</p>
+            <p>تواصل معنا: <a href="tel:963999999999">+963 999 999 999</a></p>
+        </div>
+        <p style="margin-top: 20px; font-size: 12px; color: #888;">© 2024 بوتيك الأناقة - جميع الحقوق محفوظة</p>
+    </footer>
+
+    <div id="admin-panel">
+        <div id="login-section">
+            <h2>تسجيل الدخول للوحة التحكم</h2>
+            <input type="password" id="admin-password" placeholder="أدخل كلمة المرور">
+            <br>
+            <button onclick="login()">دخول</button>
+            <button onclick="closeAdmin()" style="background: #999;">إغلاق</button>
+        </div>
+        
+        <div id="control-section" style="display:none;">
+            <h2>إدارة المنتجات</h2>
+            <h3>إضافة منتج جديد</h3>
+            <div style="display: flex; flex-direction: column; max-width: 400px; margin-bottom: 20px;">
+                <input type="text" id="new-name" placeholder="اسم الفستان">
+                <input type="text" id="new-price" placeholder="السعر (ل.س)">
+                <!-- قائمة الفئات المنسدلة -->
+                <select id="new-category">
+                    <option value="محجبات">فساتين محجبات</option>
+                    <option value="سهرة">فساتين سهرة</option>
+                    <option value="أعراس">فساتين أعراس</option>
+                </select>
+                <input type="url" id="new-img" placeholder="الصق رابط الصورة هنا">
+                <button onclick="addProduct()">إضافة المنتج</button>
+            </div>
+            
+            <hr>
+            <h3>المنتجات الحالية (لتعديل السعر أو الحذف)</h3>
+            <div id="admin-products-list"></div>
+            <button onclick="closeAdmin()" style="background: #999; margin-top: 20px;">إغلاق لوحة التحكم</button>
+        </div>
+    </div>
+
+    <div id="lightbox-modal" onclick="closeLightbox(event)">
+        <span id="lightbox-close">&times;</span>
+        <img id="lightbox-img" src="" onclick="event.stopPropagation()">
+        <div id="zoom-controls">
+            <button onclick="zoomImage(0.5, event)">+</button>
+            <button onclick="zoomImage(-0.5, event)">-</button>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
